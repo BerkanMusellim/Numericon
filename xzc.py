@@ -1,4 +1,7 @@
 #burç was here
+#from gayness import burc
+
+
 import tkinter
 from tkinter import ttk
 import pandas as pd
