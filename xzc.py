@@ -1,7 +1,5 @@
 #burç was here
-#from gayness import burc
-
-
+#from lamenesslib import burc
 import tkinter
 from tkinter import ttk
 import pandas as pd
@@ -45,27 +43,27 @@ class Program(ttk.Frame):
         flow = int(self.flow_entry.get())
         pressure_first = int(self.pressure_entry.get())
         temperature_first = int(self.temperature_entry.get())
-        press_unit = self.var_press.get()
-        temp_unit = self.var_temp.get()
+        pressure_unit = self.var_pressure.get()
+        temperature_unit = self.var_temperature.get()
 
-        def press_unit_conversion(press_unit, pressure_first):
-            if press_unit == "bar":
+        def pressure_unit_conversion(pressusre_unit, pressure_first):
+            if pressure_unit == "bar":
                 return pressure_first / 0.069
-            elif press_unit == "kPa":
+            elif pressure_unit == "kPa":
                 return pressure_first / 6.895
-            elif press_unit == "psig":
+            elif pressure_unit == "psig":
                 return pressure_first
 
-        def temp_unit_conversion(temp_unit, temperature_first):
-            if temp_unit == "K":
+        def temperature_unit_conversion(temp_unit, temperature_first):
+            if temperature_unit == "K":
                 return 1.8 * (temperature_first - 273) + 32
-            elif temp_unit == "°C":
+            elif temperature_unit == "°C":
                 return temperature_first * 1.8 + 32
-            elif temp_unit == "F":
+            elif temperature_unit == "F":
                 return temperature_first
 
-        temperature = temp_unit_conversion(temp_unit, temperature_first)
-        pressure = press_unit_conversion(press_unit, pressure_first)
+        temperature = temperature_unit_conversion(temperature_unit, temperature_first)
+        pressure = pressure_unit_conversion(pressure_unit, pressure_first)
 
 #data pulling from table starts here
         def roundup_temp(temperature):
@@ -121,23 +119,27 @@ class Program(ttk.Frame):
         self.flow_entry = ttk.Entry(self, width=10)
         self.flow_entry.grid(column=1, row=2)
         self.var_flow = tkinter.StringVar()
-        self.flow_unit = tkinter.OptionMenu(self, self.var_flow, "kg/h", "kg/s", "lb/h", "lb/s")
-        self.flow_unit.grid(column=2, row=2)
-        self.var_flow.set("kg/h")
+        self.box = ttk.Combobox(self, textvariable=self.var_flow,
+                                state='readonly')
+        self.box['values'] = ("kg/h", "kg/s", "lb/h", "lb/s")
+        self.box.current(0)
+        self.box.grid(column=2, row=2)
 
         self.pressure_entry = ttk.Entry(self, width=10)
         self.pressure_entry.grid(column=1, row=3)
-        self.var_press = tkinter.StringVar()
-        self.pressure_unit = tkinter.OptionMenu(self, self.var_press, "psig", "bar", "kPa")
-        self.pressure_unit.grid(column=2, row=3)
-        self.var_press.set("psig")
+        self.var_pressure = tkinter.StringVar()
+        self.box = ttk.Combobox(self, textvariable=self.var_pressure,
+                                state='readonly')
+        self.box['values'] = ("psig", "bar", "kPa")
+        self.box.current(0)
+        self.box.grid(column=2, row=3)
 
         self.temperature_entry = ttk.Entry(self, width=10)
         self.temperature_entry.grid(column=1, row=4)
-        self.var_temp = tkinter.StringVar()
-        self.temperature_unit = tkinter.OptionMenu(self, self.var_temp, "F", "K", "°C")
+        self.var_temperature = tkinter.StringVar()
+        self.temperature_unit = tkinter.OptionMenu(self, self.var_temperature, "F", "K", "°C")
         self.temperature_unit.grid(column=2, row=4)
-        self.var_temp.set("F")
+        self.var_temperature.set("F")
 
         self.calc_button = ttk.Button(self, text='Calculate', command=self.calculate)
         self.calc_button.grid(column=0, row=5, columnspan=4)
