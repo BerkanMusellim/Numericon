@@ -54,14 +54,14 @@ class Program(ttk.Frame):
 
         def temp_unit_conversion(temp_unit, temperature_first):
             if temp_unit == "K":
-                return 1.8*(temperature_first - 273)+32
+                return 1.8 * (temperature_first - 273) + 32
             elif temp_unit == "°C":
-                return temperature_first*1.8+32
+                return temperature_first * 1.8 + 32
             elif temp_unit == "F":
                 return temperature_first
 
         temperature = temp_unit_conversion(temp_unit, temperature_first)
-        pressure=press_unit_conversion(press_unit, pressure_first)
+        pressure = press_unit_conversion(press_unit, pressure_first)
 
 #data pulling from table starts here
         def roundup_temp(temperature):
@@ -89,6 +89,9 @@ class Program(ttk.Frame):
         A=flow/(51.5*self.P1*self.Kd*self.Kb*self.Kc*self.Kn*self.Ksh)
 
         self.answer_label['text'] = A
+        print(flow)
+        print(pressure)
+        print(temperature)
 
     def init_gui(self):
         self.root.title('Sizing Pressure-Relieving Devices (API 520)')
@@ -113,25 +116,22 @@ class Program(ttk.Frame):
 
         self.flow_entry = ttk.Entry(self, width=10)
         self.flow_entry.grid(column=1, row=2)
-
         self.var_flow = tkinter.StringVar()
-        self.flow_unit = tkinter.OptionMenu(self, self.var_flow, "kg/h","kg/s","lb/h","lb/s")
+        self.flow_unit = tkinter.OptionMenu(self, self.var_flow, "kg/h", "kg/s", "lb/h", "lb/s")
         self.flow_unit.grid(column=2, row=2)
         self.var_flow.set("kg/h")
 
         self.pressure_entry = ttk.Entry(self, width=10)
         self.pressure_entry.grid(column=1, row=3)
-
         self.var_press = tkinter.StringVar()
-        self.pressure_unit = tkinter.OptionMenu(self, self.var_press, "psig","bar","kPa")
+        self.pressure_unit = tkinter.OptionMenu(self, self.var_press, "psig", "bar", "kPa")
         self.pressure_unit.grid(column=2, row=3)
         self.var_press.set("psig")
 
         self.temperature_entry = ttk.Entry(self, width=10)
         self.temperature_entry.grid(column=1, row=4)
-
         self.var_temp = tkinter.StringVar()
-        self.temperature_unit = tkinter.OptionMenu(self, self.var_temp, "F","K","°C")
+        self.temperature_unit = tkinter.OptionMenu(self, self.var_temp, "F", "K", "°C")
         self.temperature_unit.grid(column=2, row=4)
         self.var_temp.set("F")
 
