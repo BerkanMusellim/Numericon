@@ -101,11 +101,11 @@ class Program(ttk.Frame):
 
         self.firevar = tkinter.IntVar()
         self.firecase = ttk.Checkbutton(self, text='Fire Case', variable=self.firevar, command=self.fire)
-        self.firecase.grid(column=0, row=11)
+        self.firecase.grid(column=0, row=11, sticky="W")
 
         self.instvar = tkinter.IntVar()
         self.firecase = ttk.Checkbutton(self, text='Valve Installation mode', variable=self.instvar, command=self.fire)
-        self.firecase.grid(column=1, row=11)
+        self.firecase.grid(column=1, row=11, sticky="W")
 
         self.kdcoeffvar = tkinter.IntVar()
         self.ruptureonlycase = ttk.Checkbutton(self, text='No pressure relief valve only rupture disk', variable=self.kdcoeffvar, command=self.rupture)
@@ -114,10 +114,10 @@ class Program(ttk.Frame):
         self.kccoeffvar = tkinter.IntVar()
         self.ruptureinstcase = ttk.Checkbutton(self, text='There is rupture disk in the upstream',
                                                variable=self.kccoeffvar, command=self.ruptureinst)
-        self.ruptureinstcase.grid(column=0, row=13)
+        self.ruptureinstcase.grid(column=0, row=13, sticky="W")
 
         self.flow_entry = ttk.Entry(self, width=10)
-        self.flow_entry.grid(column=1, row=2)
+        self.flow_entry.grid(column=1, row=2, sticky="W")
         self.var_flow = tkinter.StringVar()
         self.box = ttk.Combobox(self, textvariable=self.var_flow,
                                 state='readonly')
@@ -126,7 +126,7 @@ class Program(ttk.Frame):
         self.box.grid(column=2, row=2)
 
         self.pressure_entry = ttk.Entry(self, width=10)
-        self.pressure_entry.grid(column=1, row=3)
+        self.pressure_entry.grid(column=1, row=3, sticky="W")
         self.var_pressure = tkinter.StringVar()
         self.box = ttk.Combobox(self, textvariable=self.var_pressure,
                                 state='readonly')
@@ -135,7 +135,7 @@ class Program(ttk.Frame):
         self.box.grid(column=2, row=3)
 
         self.temperature_entry = ttk.Entry(self, width=10)
-        self.temperature_entry.grid(column=1, row=4)
+        self.temperature_entry.grid(column=1, row=4, sticky="W")
         self.var_temperature = tkinter.StringVar()
         self.box = ttk.Combobox(self, textvariable=self.var_temperature,
                                 state="readonly")
@@ -144,10 +144,10 @@ class Program(ttk.Frame):
         self.box.grid(column=2, row=4)
 
         self.calc_button = ttk.Button(self, text='Calculate', command=self.calculate)
-        self.calc_button.grid(column=0, row=5, columnspan=4)
+        self.calc_button.grid(column=2, row=5, columnspan=4, sticky="E")
 
         self.quit_button = ttk.Button(self, text='Quit', command=self.on_quit)
-        self.quit_button.grid(column=3, row=5, columnspan=4)
+        self.quit_button.grid(column=2, row=13, columnspan=4, sticky="E")
 
         self.answer_frame = ttk.LabelFrame(self, text='Answer', height=100)
         self.answer_frame.grid(column=0, row=6, columnspan=4, sticky='nesw')
@@ -157,10 +157,9 @@ class Program(ttk.Frame):
 
         #constant labels
         ttk.Label(self, text='Sizing Pressure-Relieving Devices (API 520)').grid(column=0, row=0, columnspan=4)
-        ttk.Label(self, text='Flow').grid(column=0, row=2, columnspan=4, sticky='w')
-        ttk.Label(self, text='Pressure').grid(column=0, row=3, sticky='w')
-        ttk.Label(self, text='Temperature').grid(column=0, row=4, sticky='w')
-
+        ttk.Label(self, text='Flow').grid(row=2, sticky='w')
+        ttk.Label(self, text='Pressure').grid(row=3, sticky='w')
+        ttk.Label(self, text='Temperature').grid(row=4, sticky='w')
         ttk.Separator(self, orient='horizontal').grid(column=0, row=1, columnspan=4, sticky='ew')
 
         for child in self.winfo_children():
