@@ -25,12 +25,16 @@ class Program(ttk.Frame):
         else:
             self.accumulation = 1.1
 
+    #for the effective coefficient of discharge
     def rupture(self):
         if (self.kdcoeffvar.get() ==1):
             self.Kd = 0.62
         else:
-            self.Kd = 0.97
+            self.Kd = 0.975
+            #self.combinationcorrection.state(state=DISABLED)
 
+    #for combination correction factor for installation with a rupture
+    #  disk upstream of the pressure relief valve
     def ruptureinst(self):
         if (self.kccoeffvar.get() ==1):
             self.Kc = 0.9
@@ -40,60 +44,88 @@ class Program(ttk.Frame):
     def calculate(self):
         # Constant Values
 
-        flow = int(self.flow_entry.get())
-        pressure_first = int(self.pressure_entry.get())
-        temperature_first = int(self.temperature_entry.get())
-        pressure_unit = self.var_pressure.get()
-        temperature_unit = self.var_temperature.get()
+        raw_flow = int(self.flow_entry.get())
+        raw_pressure = int(self.pressure_entry.get())
+        raw_temperature = int(self.temperature_entry.get())
 
-        def pressure_unit_conversion(pressusre_unit, pressure_first):
-            if pressure_unit == "bar":
-                return pressure_first / 0.069
-            elif pressure_unit == "kPa":
-                return pressure_first / 6.895
-            elif pressure_unit == "psig":
-                return pressure_first
+        unit_flow = self.unit_index_flow.get()
+        unit_pressure = self.unit_index_pressure.get()
+        unit_temperature = self.unit_index_temperature.get()
 
-        def temperature_unit_conversion(temp_unit, temperature_first):
-            if temperature_unit == "K":
-                return 1.8 * (temperature_first - 273) + 32
-            elif temperature_unit == "°C":
-                return temperature_first * 1.8 + 32
-            elif temperature_unit == "F":
-                return temperature_first
+        def flow_unit_conversion(unit_flow, raw_flow):
+            if unit_flow == "kg/h":
+                return raw_flow * 2.20462262185
+            elif unit_flow == "kg/s":
+                return raw_flow *2.20462262185 /3600
+            elif unit_flow == "lb/h":
+                return raw_flow
+            elif unit_flow == "lb/s":
+                return raw_flow /3600
 
-        temperature = temperature_unit_conversion(temperature_unit, temperature_first)
-        pressure = pressure_unit_conversion(pressure_unit, pressure_first)
+        def pressure_unit_conversion(unit_pressure, raw_pressure):
+            if unit_pressure == "barg":
+                return raw_pressure / 0.069
+            elif unit_pressure == "kPag":
+                return raw_pressure / 6.895
+            elif unit_pressure == "psig":
+                return raw_pressure
+
+        def temperature_unit_conversion(unit_temperature, raw_temperature):
+            if unit_temperature == "K":
+                return 1.8 * (raw_temperature - 273) + 32
+            elif unit_temperature == "°C":
+                return raw_temperature * 1.8 + 32
+            elif unit_temperature == "F":
+                return raw_temperature
+
+        converted_flow = flow_unit_conversion(unit_flow, raw_flow)
+        converted_temperature = temperature_unit_conversion(unit_temperature, raw_temperature)
+        converted_pressure = pressure_unit_conversion(unit_pressure, raw_pressure)
 
 #data pulling from table starts here
-        def roundup_temp(temperature):
-            return table_df.columns[table_df.columns >= temperature].min()
+        def roundup_temp(converted_temperature):
+            return table_df.columns[table_df.columns >= converted_temperature].min()
 
-        def roundup_pres(pressure):
-            return table_df.index[table_df.index >= pressure].min()
+        def roundup_pres(converted_pressure):
+            return table_df.index[table_df.index >= converted_pressure].min()
 
-        def pull_data(pressure, temperature):
-            return table_df.loc[roundup_pres(pressure), roundup_temp(temperature)]
+        def pull_data(converted_pressure, converted_temperature):
+            return table_df.loc[roundup_pres(converted_pressure), roundup_temp(converted_temperature)]
 
         filename = "API Table 9.csv"
         table_df = pd.read_csv(filename).set_index("Unnamed: 0")
         table_df.index.name = None
         table_df.columns = table_df.columns.astype(int)
-        self.Ksh=pull_data(pressure, temperature)
+        self.Ksh=pull_data(converted_pressure, converted_temperature)
 #data pulling ends here
-        self.P1=pressure*self.accumulation+14.7
 
-        self.Kn=(0.1906*self.P1-1000)/(0.2292*self.P1-1061)
+        #P1= Relieving Pressure
+        self.P1=converted_pressure*self.accumulation+14.7
 
-        #self.Kb= -2.428*(14.7/pressure)**2+(14.7/pressure)*0.372+1.108
-        self.Kb = 1
+        if self.P1 <= 1500:
+            self.Kn=1
+        elif self.P1 <= 3200 and self.P1 > 1500:
+            self.Kn=(0.1906*self.P1-1000)/(0.2292*self.P1-1061)
 
-        A=flow/(51.5*self.P1*self.Kd*self.Kb*self.Kc*self.Kn*self.Ksh)
+        self.Kb1= -2.428*(14.7/converted_pressure)**2+(14.7/converted_pressure)*0.372+1.108
+        self.Kb2 = 1
 
-        self.answer_label['text'] = A
-        print(flow)
-        print(pressure)
-        print(temperature)
+        A=converted_flow/(51.5*self.P1*self.Kd*self.Kb1*self.Kc*self.Kn*self.Ksh)
+        A_rounded=round(A,2)
+
+        self.answer_label['text'] = A_rounded
+
+        #print(converted_flow)
+        #print(self.unit_index_flow)
+        #print(unit_flow)
+        #print(converted_pressure)
+        #print(self.unit_index_pressure)
+        #print(unit_pressure)
+        #print(converted_temperature)
+        #print(self.unit_index_temperature)
+        #print(unit_temperature)
+        #print(self.Kb1)
+        print(self.Kd)
 
     def init_gui(self):
         self.root.title('Sizing Pressure-Relieving Devices (API 520)')
@@ -107,41 +139,52 @@ class Program(ttk.Frame):
         self.firecase = ttk.Checkbutton(self, text='Valve Installation mode', variable=self.instvar, command=self.fire)
         self.firecase.grid(column=1, row=11, sticky="W")
 
+#getting effective coefficient of discharge input starts here
         self.kdcoeffvar = tkinter.IntVar()
-        self.ruptureonlycase = ttk.Checkbutton(self, text='No pressure relief valve only rupture disk', variable=self.kdcoeffvar, command=self.rupture)
-        self.ruptureonlycase.grid(column=0, row=12)
+        self.effectivecoefdisc = ttk.Checkbutton(self, text='A pressure relief valve is not installed and '
+                                                          'sizing is for a rupture disk',
+                                               variable=self.kdcoeffvar, command=self.rupture)
+        self.effectivecoefdisc.grid(column=0, row=12)
+#getting effective coefficient of discharge input ends here
 
         self.kccoeffvar = tkinter.IntVar()
-        self.ruptureinstcase = ttk.Checkbutton(self, text='There is rupture disk in the upstream',
+        self.combinationcorrection = ttk.Checkbutton(self, text='A rupture disk is installed in combination with'
+                                                          ' a pressure relief valve',
                                                variable=self.kccoeffvar, command=self.ruptureinst)
-        self.ruptureinstcase.grid(column=0, row=13, sticky="W")
+        self.combinationcorrection.grid(column=0, row=13, sticky="W")
 
+#GETTING FLOW AND UNIT STARTS HERE
         self.flow_entry = ttk.Entry(self, width=10)
         self.flow_entry.grid(column=1, row=2, sticky="W")
-        self.var_flow = tkinter.StringVar()
-        self.box = ttk.Combobox(self, textvariable=self.var_flow,
+        self.unit_index_flow = tkinter.StringVar()
+        self.box = ttk.Combobox(self, textvariable=self.unit_index_flow,
                                 state='readonly')
         self.box['values'] = ("kg/h", "kg/s", "lb/h", "lb/s")
         self.box.current(0)
         self.box.grid(column=2, row=2)
+# GETTING FLOW AND UNIT STARTS HERE
 
+# GETTING PRESSURE AND UNIT STARTS HERE
         self.pressure_entry = ttk.Entry(self, width=10)
         self.pressure_entry.grid(column=1, row=3, sticky="W")
-        self.var_pressure = tkinter.StringVar()
-        self.box = ttk.Combobox(self, textvariable=self.var_pressure,
+        self.unit_index_pressure = tkinter.StringVar()
+        self.box = ttk.Combobox(self, textvariable=self.unit_index_pressure,
                                 state='readonly')
-        self.box['values'] = ("psig", "bar", "kPa")
+        self.box['values'] = ("psig", "barg", "kPag")
         self.box.current(0)
         self.box.grid(column=2, row=3)
+# GETTING PRESSURE AND UNIT ENDS HERE
 
+# GETTING TEMPERATURE AND UNIT STARTS HERE
         self.temperature_entry = ttk.Entry(self, width=10)
         self.temperature_entry.grid(column=1, row=4, sticky="W")
-        self.var_temperature = tkinter.StringVar()
-        self.box = ttk.Combobox(self, textvariable=self.var_temperature,
+        self.unit_index_temperature = tkinter.StringVar()
+        self.box = ttk.Combobox(self, textvariable=self.unit_index_temperature,
                                 state="readonly")
         self.box["values"] = ("F", "K", "°C")
         self.box.current(0)
         self.box.grid(column=2, row=4)
+# GETTING TEMPERATURE AND UNIT ENDS HERE
 
         self.calc_button = ttk.Button(self, text='Calculate', command=self.calculate)
         self.calc_button.grid(column=2, row=5, columnspan=4, sticky="E")
