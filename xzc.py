@@ -137,9 +137,11 @@ class Program(ttk.Frame):
         self.temperature_entry = ttk.Entry(self, width=10)
         self.temperature_entry.grid(column=1, row=4)
         self.var_temperature = tkinter.StringVar()
-        self.temperature_unit = tkinter.OptionMenu(self, self.var_temperature, "F", "K", "°C")
-        self.temperature_unit.grid(column=2, row=4)
-        self.var_temperature.set("F")
+        self.box = ttk.Combobox(self, textvariable=self.var_temperature,
+                                state="readonly")
+        self.box["values"] = ("F", "K", "°C")
+        self.box.current(0)
+        self.box.grid(column=2, row=4)
 
         self.calc_button = ttk.Button(self, text='Calculate', command=self.calculate)
         self.calc_button.grid(column=0, row=5, columnspan=4)
