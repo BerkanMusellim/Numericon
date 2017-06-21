@@ -142,14 +142,16 @@ class Program(Frame):
         self.kdcoeffvar = IntVar()
         self.effectivecoefdisc = Checkbutton(self, text='A pressure relief valve is not installed and '
                                                           'sizing is for a rupture disk',
-                                               variable=self.kdcoeffvar, command=self.rupture)
+                                               variable=self.kdcoeffvar, command=self.rupture,
+                                             wraplength=300, justify=LEFT, anchor="e")
         self.effectivecoefdisc.grid(column=0, row=12, columnspan=4, rowspan=2, sticky="W")
 #getting effective coefficient of discharge input ends here
 
         self.kccoeffvar = IntVar()
         self.combinationcorrection = Checkbutton(self, text='A rupture disk is installed in combination with'
                                                           ' a pressure relief valve',
-                                               variable=self.kccoeffvar, command=self.ruptureinst)
+                                               variable=self.kccoeffvar, command=self.ruptureinst,
+                                                 wraplength=300, justify=LEFT, anchor="e")
         self.combinationcorrection.grid(column=0, row=14, sticky="W", columnspan=4, rowspan=2)
 
 #GETTING FLOW AND UNIT STARTS HERE
@@ -157,10 +159,11 @@ class Program(Frame):
         self.flow_entry.grid(column=1, row=2, sticky="W")
         self.unit_index_flow = StringVar()
         self.box = ttk.Combobox(self, textvariable=self.unit_index_flow,
-                                state='readonly')
+                                state='readonly', width=8)
         self.box['values'] = ("kg/h", "kg/s", "lb/h", "lb/s")
         self.box.current(0)
-        self.box.grid(column=2, row=2, sticky='W')
+        self.box.grid(column=2, row=2, sticky="W")
+
 # GETTING FLOW AND UNIT STARTS HERE
 
 # GETTING PRESSURE AND UNIT STARTS HERE
@@ -168,10 +171,10 @@ class Program(Frame):
         self.pressure_entry.grid(column=1, row=3, sticky="W")
         self.unit_index_pressure = StringVar()
         self.box = ttk.Combobox(self, textvariable=self.unit_index_pressure,
-                                state='readonly')
+                                state='readonly', width=8)
         self.box['values'] = ("psig", "barg", "kPag")
         self.box.current(0)
-        self.box.grid(column=2, row=3, sticky='W')
+        self.box.grid(column=2, row=3)
 # GETTING PRESSURE AND UNIT ENDS HERE
 
 # GETTING TEMPERATURE AND UNIT STARTS HERE
@@ -179,10 +182,10 @@ class Program(Frame):
         self.temperature_entry.grid(column=1, row=4, sticky="W")
         self.unit_index_temperature = StringVar()
         self.box = ttk.Combobox(self, textvariable=self.unit_index_temperature,
-                                state="readonly")
+                                state="readonly", width=8)
         self.box["values"] = ("F", "K", "°C")
         self.box.current(0)
-        self.box.grid(column=2, row=4, sticky='W')
+        self.box.grid(column=2, row=4)
 # GETTING TEMPERATURE AND UNIT ENDS HERE
 
         self.calc_button = Button(self, text='Calculate', command=self.calculate, width=10)
