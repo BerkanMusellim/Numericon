@@ -1,16 +1,15 @@
-#burç was here
-#from lamenesslib import burc
-import tkinter
+from tkinter import *
 from tkinter import ttk
 import pandas as pd
 
-class Program(ttk.Frame):
+
+class Program(Frame):
     accumulation = 1.1
     Kd = 0.97
     Kc = 1
 
     def __init__(self, parent, *args, **kwargs):
-        ttk.Frame.__init__(self, parent, *args, **kwargs)
+        Frame.__init__(self, parent, *args, **kwargs)
         self.root = parent
         self.init_gui()
 
@@ -131,84 +130,85 @@ class Program(ttk.Frame):
         self.root.title('Sizing Pressure-Relieving Devices (API 520)')
         self.grid(column=0, row=0, sticky='nsew')
 
-        self.firevar = tkinter.IntVar()
-        self.firecase = ttk.Checkbutton(self, text='Fire Case', variable=self.firevar, command=self.fire)
+        self.firevar = IntVar()
+        self.firecase = Checkbutton(self, text='Fire Case', variable=self.firevar, command=self.fire)
         self.firecase.grid(column=0, row=11, sticky="W")
 
-        self.instvar = tkinter.IntVar()
-        self.firecase = ttk.Checkbutton(self, text='Valve Installation mode', variable=self.instvar, command=self.fire)
+        self.instvar = IntVar()
+        self.firecase = Checkbutton(self, text='Valve Installation mode', variable=self.instvar, command=self.fire)
         self.firecase.grid(column=1, row=11, sticky="W")
 
 #getting effective coefficient of discharge input starts here
-        self.kdcoeffvar = tkinter.IntVar()
-        self.effectivecoefdisc = ttk.Checkbutton(self, text='A pressure relief valve is not installed and '
+        self.kdcoeffvar = IntVar()
+        self.effectivecoefdisc = Checkbutton(self, text='A pressure relief valve is not installed and '
                                                           'sizing is for a rupture disk',
                                                variable=self.kdcoeffvar, command=self.rupture)
-        self.effectivecoefdisc.grid(column=0, row=12)
+        self.effectivecoefdisc.grid(column=0, row=12, columnspan=4, rowspan=2, sticky="W")
 #getting effective coefficient of discharge input ends here
 
-        self.kccoeffvar = tkinter.IntVar()
-        self.combinationcorrection = ttk.Checkbutton(self, text='A rupture disk is installed in combination with'
+        self.kccoeffvar = IntVar()
+        self.combinationcorrection = Checkbutton(self, text='A rupture disk is installed in combination with'
                                                           ' a pressure relief valve',
                                                variable=self.kccoeffvar, command=self.ruptureinst)
-        self.combinationcorrection.grid(column=0, row=13, sticky="W")
+        self.combinationcorrection.grid(column=0, row=14, sticky="W", columnspan=4, rowspan=2)
 
 #GETTING FLOW AND UNIT STARTS HERE
-        self.flow_entry = ttk.Entry(self, width=10)
+        self.flow_entry = Entry(self, width=15)
         self.flow_entry.grid(column=1, row=2, sticky="W")
-        self.unit_index_flow = tkinter.StringVar()
+        self.unit_index_flow = StringVar()
         self.box = ttk.Combobox(self, textvariable=self.unit_index_flow,
                                 state='readonly')
         self.box['values'] = ("kg/h", "kg/s", "lb/h", "lb/s")
         self.box.current(0)
-        self.box.grid(column=2, row=2)
+        self.box.grid(column=2, row=2, sticky='W')
 # GETTING FLOW AND UNIT STARTS HERE
 
 # GETTING PRESSURE AND UNIT STARTS HERE
-        self.pressure_entry = ttk.Entry(self, width=10)
+        self.pressure_entry = Entry(self, width=15)
         self.pressure_entry.grid(column=1, row=3, sticky="W")
-        self.unit_index_pressure = tkinter.StringVar()
+        self.unit_index_pressure = StringVar()
         self.box = ttk.Combobox(self, textvariable=self.unit_index_pressure,
                                 state='readonly')
         self.box['values'] = ("psig", "barg", "kPag")
         self.box.current(0)
-        self.box.grid(column=2, row=3)
+        self.box.grid(column=2, row=3, sticky='W')
 # GETTING PRESSURE AND UNIT ENDS HERE
 
 # GETTING TEMPERATURE AND UNIT STARTS HERE
-        self.temperature_entry = ttk.Entry(self, width=10)
+        self.temperature_entry = Entry(self, width=15)
         self.temperature_entry.grid(column=1, row=4, sticky="W")
-        self.unit_index_temperature = tkinter.StringVar()
+        self.unit_index_temperature = StringVar()
         self.box = ttk.Combobox(self, textvariable=self.unit_index_temperature,
                                 state="readonly")
         self.box["values"] = ("F", "K", "°C")
         self.box.current(0)
-        self.box.grid(column=2, row=4)
+        self.box.grid(column=2, row=4, sticky='W')
 # GETTING TEMPERATURE AND UNIT ENDS HERE
 
-        self.calc_button = ttk.Button(self, text='Calculate', command=self.calculate)
+        self.calc_button = Button(self, text='Calculate', command=self.calculate, width=10)
         self.calc_button.grid(column=2, row=5, columnspan=4, sticky="E")
 
-        self.quit_button = ttk.Button(self, text='Quit', command=self.on_quit)
-        self.quit_button.grid(column=2, row=13, columnspan=4, sticky="E")
+        self.quit_button = Button(self, text='Quit', command=self.on_quit, width=10)
+        self.quit_button.grid(column=2, row=16, columnspan=4, sticky="E")
 
-        self.answer_frame = ttk.LabelFrame(self, text='Answer', height=100)
+        self.answer_frame = LabelFrame(self, text='Answer', height=100)
         self.answer_frame.grid(column=0, row=6, columnspan=4, sticky='nesw')
 
-        self.answer_label = ttk.Label(self.answer_frame, text='')
+        self.answer_label = Label(self.answer_frame, text='')
         self.answer_label.grid(column=0, row=0)
 
         #constant labels
-        ttk.Label(self, text='Sizing Pressure-Relieving Devices (API 520)').grid(column=0, row=0, columnspan=4)
-        ttk.Label(self, text='Flow').grid(row=2, sticky='w')
-        ttk.Label(self, text='Pressure').grid(row=3, sticky='w')
-        ttk.Label(self, text='Temperature').grid(row=4, sticky='w')
+        Label(self, text='Sizing Pressure-Relieving Devices (API 520)').grid(column=0, row=0, columnspan=4)
+        Label(self, text='Flow').grid(row=2, sticky='e')
+        Label(self, text='Pressure').grid(row=3, sticky='e')
+        Label(self, text='Temperature').grid(row=4, sticky='e')
         ttk.Separator(self, orient='horizontal').grid(column=0, row=1, columnspan=4, sticky='ew')
 
         for child in self.winfo_children():
-            child.grid_configure(padx=5, pady=5)
+            child.grid_configure(padx=8, pady=8)
 
 if __name__ == '__main__':
-    root =tkinter.Tk()
+    root =Tk()
+    root.resizable(width=False, height=False)
     Program(root)
     root.mainloop()
