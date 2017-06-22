@@ -17,6 +17,7 @@ class Program(Frame):
         return ctypes.windll.user32.MessageBoxW(0,text,title,style)
 
     def on_quit(self):
+        logFile.write(time.strftime("%H:%M:%S") "-- Program has finished")
         self.root.destroy()
 
     def fire(self):
@@ -48,24 +49,30 @@ class Program(Frame):
             self.Kc = 1
 
     def calculate(self):
+        logFile.write(time.strftime("%H:%M:%S") "-- Calculate function has started")
         try:
             raw_flow = float(self.flow_entry.get())
         except ValueError:
             self.Mbox("Error", "Please enter a valid flowrate.", 1)
-
+            logFile.write(time.strftime("%H:%M:%S") "-- Invalid flowrate.")
+            
         try:
             raw_pressure = float(self.pressure_entry.get())
         except ValueError:
             self.Mbox("Error", "Please enter a valid pressure.", 1)
-
+            logFile.write(time.strftime("%H:%M:%S") "-- Invalid pressure.")
+            
         try:
             raw_temperature =float(self.temperature_entry.get())
         except ValueError:
             self.Mbox("Error", "Please enter a valid temperature.", 1)
-
+            logFile.write(time.strftime("%H:%M:%S") "-- Invalid temperature.")
+        
+        logFile.write(time.strftime("%H:%M:%S") "-- Calculate function has finished")
         unit_flow = self.unit_index_flow.get()
         unit_pressure = self.unit_index_pressure.get()
         unit_temperature = self.unit_index_temperature.get()
+        
 
         def flow_unit_conversion(unit_flow, raw_flow):
             if unit_flow == "kg/h":
@@ -98,6 +105,7 @@ class Program(Frame):
         converted_pressure = pressure_unit_conversion(unit_pressure, raw_pressure)
 
     #data pulling from table starts here
+        logFile.write(time.strftime("%H:%M:%S") "-- Data pulling started")
         def roundup_temp(converted_temperature):
             return table_df.columns[table_df.columns >= converted_temperature].min()
 
@@ -112,6 +120,8 @@ class Program(Frame):
         table_df.index.name = None
         table_df.columns = table_df.columns.astype(int)
         self.Ksh=pull_data(converted_pressure, converted_temperature)
+        logFile.write(time.strftime("%H:%M:%S") "-- Data Finished")
+        
     #data pulling ends here
 
         #P1= Relieving Pressure
@@ -133,6 +143,8 @@ class Program(Frame):
         print(self.Kc)
 
     def init_gui(self):
+        logFile.write(time.strftime("%H:%M:%S") "-- Gui started")
+        
         self.root.title('Sizing Pressure-Relieving Devices (API 520)')
         self.grid(column=0, row=0, sticky='nsew')
 
@@ -143,7 +155,7 @@ class Program(Frame):
         self.instvar = IntVar()
         self.firecase = Checkbutton(self, text='Valve Installation mode', variable=self.instvar, command=self.fire)
         self.firecase.grid(column=1, row=11, sticky="W")
-
+        
 #getting effective coefficient of discharge input starts here
         self.kdcoeffvar = IntVar()
         self.effectivecoefdisc = Checkbutton(self, text='A pressure relief valve is not installed and '
@@ -217,7 +229,10 @@ class Program(Frame):
             child.grid_configure(padx=8, pady=8)
 
 if __name__ == '__main__':
+    with open("log.txt", "a") as logFile:
+    logFile.write(time.strftime("%H:%M:%S") "-- Program has started")
     root =Tk()
     root.resizable(width=False, height=False)
     Program(root)
     root.mainloop()
+    logFile.write(time.strftime("%H:%M:%S") "-- Program has ended")
