@@ -10,3 +10,5 @@ Flow-Pressure-Temperature değelerinden birini yada birden fazlasını girmedği
   planda kod hata veriyor. Log file bunlarla dolabilir. Çözüm olarak ya bu hatalar log a işlenmeye-
   cek, yada eğer kod flow-pressure-temperature datalarını alamazsa (string to float
   yapamazsa) devam etmeyecek çözmeye (ki bunu uygulamak daha doğru olur) (kalel)
+Programın hata mesajları biriktirilip hepsi tek pencerede verilmeli bu konunun uygulamasını bulan
+  olursa paylaşabilir (zomb-vurbag-kalel)
