@@ -5,4 +5,8 @@ Görsel arayüz geliştirilecek (kalel-vurbag-zomb)
 Pdf çıktısı için ekstra bir .py dosyasında çalışılacak (vurbag)
 Genel kod gözden geçirilecek, class sistemi için eğitim verilecek, kitap paylaşımı belki (kalel)
 Gas ve liquid relief eklenmesi gerekiyor.
-
+Flow-Pressure-Temperature değelerinden birini yada birden fazlasını girmedğinde hata mesajı veren 
+  ekleme yapıldı. Fakat try except finally gibi bir kod olmadığından !kullanıcıya yansımasa da! arka-
+  planda kod hata veriyor. Log file bunlarla dolabilir. Çözüm olarak ya bu hatalar log a işlenmeye-
+  cek, yada eğer kod flow-pressure-temperature datalarını alamazsa (string to float
+  yapamazsa) devam etmeyecek çözmeye (ki bunu uygulamak daha doğru olur) (kalel)
