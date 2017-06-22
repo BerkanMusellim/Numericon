@@ -31,6 +31,7 @@ class Program(Frame):
     def rupture(self):
         if (self.kdcoeffvar.get() ==1):
             self.Kd = 0.62
+            self.Kc = 1
             self.combinationcorrection.configure(state='disabled')
             self.combinationcorrection.deselect()
         else:
